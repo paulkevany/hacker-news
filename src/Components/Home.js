@@ -1,67 +1,67 @@
 import React, { Component } from "react";
-import { AppBar, Paper, Grid, Toolbar, Typography } from "@material-ui/core";
+import {
+    Button,
+    Grid,
+    Toolbar,
+    Typography,
+    Menu,
+    MenuItem
+} from "@material-ui/core";
+import AppBarTop from './AppBarTop'
 import PropTypes from "prop-types";
+import { Redirect } from "react-router";
+import {Link} from 'react-router-dom'
 import { withStyles } from "@material-ui/core/styles";
 import StorySummary from "./StorySummary";
 import { getTopStories } from "../Actions/story";
-import {connect} from 'react-redux'
+import { connect } from "react-redux";
 
 const styles = {
     root: {
         display: "flex",
         flexDirection: "column",
-        minWidth: "100%",
-        minHeight: "100vh",
         alignItems: "center",
-        justifyContent: "center"
-    },
-    paper: {
-        minWidth: "100%",
-        backgroundColor: "#F7F7F7"
+        justifyContent: "center",
     },
 
-    appbar: {
-        background: "#ff6600"
-    }
 };
 
 class Home extends Component {
+
     componentDidMount() {
         this.props.dispatch(getTopStories());
     }
+
+
     render() {
         const { classes } = this.props;
+        const { stories } = this.props;
 
+        const story =
+            stories.length === 0 ? (
+                <Grid item>
+                    <Typography variant="subtitle1">
+                        No Stories were found
+                    </Typography>
+                </Grid>
+            ) : (
+                stories.map(story => (
+                    <Grid item key={story.id}>
+                        <StorySummary
+                            id={story.id}
+                            title={story.title}
+                            url={story.url}
+                            domain={story.domain}
+                            by={story.by}
+                            time={story.time}
+                            points ={story.score}
+                        />
+                    </Grid>
+                ))
+            );
         return (
             <div className={classes.root}>
-                <Paper className={classes.paper}>
-                    <Grid item>
-                        <AppBar position="fixed" className={classes.appbar}>
-                            <Toolbar>
-                                <Grid
-                                    item
-                                    container
-                                    direction="row"
-                                    alignItems="center"
-                                    alignContent="space-between"
-                                    spacing={2}
-                                >
-                                    <Grid item>
-                                        <img
-                                            src="https://news.ycombinator.com/y18.gif"
-                                            height="40"
-                                            width="40"
-                                            alt="Hacker News Logo"
-                                        />
-                                    </Grid>
-                                    <Grid item>
-                                        <Typography style={{ fontSize: 20 }}>
-                                            Hacker News
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </Toolbar>
-                        </AppBar>
+                    <AppBarTop/>
                         <Grid
                             item
                             container
@@ -69,31 +69,29 @@ class Home extends Component {
                             direction="row"
                             justify="center"
                             style={{
-                                width: "70vw",
+                                width: "40vw",
                                 height: "100vh",
-                                background: "#e2e6e9",
-                                marginLeft: "15vw",
-                                marginRight: "15vw"
+                                marginLeft: "20vw",
+                                marginRight: "20vw",
+                                marginTop: "20vh"
                             }}
                         >
-                            <Grid item style={{ marginTop: "10vh" }}>
-                                <StorySummary />
+                            <Grid item align="right"></Grid>
+                            <Grid item align="center">
+                                {story}
                             </Grid>
                         </Grid>
-                    </Grid>
-                </Paper>
             </div>
         );
     }
 }
 
-const mapStateToProps = ({}) => ({
-        
-})
+const mapStateToProps = ({ app: { stories } }) => ({ stories });
 
 Home.propTypes = {
     classes: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired
+    dispatch: PropTypes.func.isRequired,
+    stories: PropTypes.array.isRequired
 };
 
 export default connect(mapStateToProps)(withStyles(styles)(Home));

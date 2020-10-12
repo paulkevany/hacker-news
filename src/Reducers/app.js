@@ -8,9 +8,9 @@ import {
 } from "../Actions/story.js";
 
 const initialState = {
-    stories: [],
     retrievingStories: false,
-    storiesRetrieved: false
+    storiesRetrieved: false,
+    stories: []
 };
 
 export default (state = initialState, action) => {
@@ -50,12 +50,12 @@ export default (state = initialState, action) => {
             }
         
         case LOAD_SINGLE_STORY_SUCCESS:
-            state.stories.push(action.payload)
             return {
                 ...state,
                 loadingStory: false,
                 storyLoaded: true,
-                storyLoadError: false
+                storyLoadError: false,
+                stories: [...state.stories, action.payload.data]
             }
 
         case LOAD_SINGLE_STORY_FAILURE: 
